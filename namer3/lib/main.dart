@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         title: 'Namer App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         ),
         home: MyHomePage(),
       ),
@@ -39,23 +39,67 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    var pair = appState.current; // ← Add this.
 
     return Scaffold(
-      body: Column(
-        children: [
-          //Text('A random idea:'),
-          Text('A random AWESOME idea:'), // ← Example change.
-          Text(appState.current.asLowerCase),
-          // ↓ Add this.
-          ElevatedButton(
-            onPressed: () {
-              // print('button pressed!');
-              appState.getNext(); // ← This instead of print().
-            },
-            child: Text('Next'),
-          ),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, // ← Add this.
+          children: [
+            //Text('A random idea:'),
+            Text('A random AWESOME idea:'), // ← Example change.
+            // Text(appState.current.asLowerCase),
+            BigCard(pair: pair), // ← Change to this.
+            SizedBox(height: 10),
+            // ↓ Add this.
+            ElevatedButton(
+              onPressed: () {
+                // print('button pressed!');
+                appState.getNext(); // ← This instead of print().
+              },
+              child: Text('Next'),
+            ),
+          ],
+        ),
       ),
     );
+  }
+}
+
+class BigCard extends StatelessWidget {
+  const BigCard({
+    Key? key,
+    required this.pair,
+  }) : super(key: key);
+
+  final WordPair pair;
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context); // ← Add this.
+    var style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
+
+    return Card(
+      color: theme.colorScheme.primary, // ← And also this.
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        // ↓ Make the following change.
+        child: Text(
+          pair.asLowerCase,
+          style: style,
+          semanticsLabel: pair.asPascalCase,
+        ),
+        // ↓ Change this line.
+        //child: Text(pair.asLowerCase, style: style),
+        //child: Text(pair.asLowerCase),
+      ),
+    );
+
+    // return Padding(
+    //   padding: const EdgeInsets.all(8.0),
+    //   child: Text(pair.asLowerCase),
+    // );
   }
 }
